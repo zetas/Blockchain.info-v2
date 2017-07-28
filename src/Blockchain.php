@@ -12,8 +12,8 @@ class Blockchain
 
 	private $_xpub = '<YOUR XPUB KEY>';
 	private $_key = '<YOUR API KEY>';
-    private $_currencyCode = 'USD';
-    private $_userAgent = 'Zetas-BlockchainV2Api/1.0.0';
+	private $_currencyCode = 'USD';
+	private $_userAgent = 'Zetas-BlockchainV2Api/1.0.0';
 
     // Do not touch.
 	private $_blockchainURL = 'https://api.blockchain.info';
