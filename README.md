@@ -73,7 +73,7 @@ if (!validateSecret($secret, $paymentID))
 }
 
 //Validate amount
-$amountRequiredSatoshi = getAmountRequired($paymentID); //pull this information from your database, best to store BTC amounts in [satoshis](https://bitcoin.stackexchange.com/questions/114/what-is-a-satoshi).
+$amountRequiredSatoshi = getAmountRequired($paymentID); //pull this information from your database, best to store BTC amounts in satoshis. See: https://bitcoin.stackexchange.com/questions/114/what-is-a-satoshi.
 
 //Simple validation. This has some caveats:
 // 1. It will not adjust the value if BTC prices change between address generation and payment recieved.
@@ -85,12 +85,14 @@ if ($amountRequiredSatoshi > $amountReceivedSatoshi) {
     exit();
 }
 
+// --- OR --- 
+
 //Advanced validation. Requires storing fiat currency amounts in local database (price in USD for example).
 //Allows for some variability in received amounts as well as auto-adjusting to currency flucuations. 
 
 $blockchain = new Blockchain();
 
-$amountRequiredUSD = getAmountRequiredUSD($payment_id);
+$amountRequiredUSD = getAmountRequiredUSD($paymentID);
 
 //The amount, in fiat currency, you are willing to allow the payment to be off from the required value to still consider it a success. 
 $paymentVariabilityAllowed = 1;  //In this example, we are allowing a payment of $1 less than required. 
