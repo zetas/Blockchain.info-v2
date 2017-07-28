@@ -43,7 +43,7 @@ Example callback code (assuming the callback used above):
 //Store the success value output to stop the blockchain API from calling your callback address.
 // if it does not receive this output it will continually call this page for every confirmation up
 // to a full week, eventually your domain may be blocked if continue to let it go.
-$success = "*ok*";
+$apiCompleteMsg = "*ok*";
 
 // How many confirmations are needed before this transaction is considered complete and successful.
 $minConfirmations = 3;
@@ -68,7 +68,7 @@ if ($confirmations < $minConfirmations) {
 
 //Validate secret with your local database
 if (!validateSecret($secret, $paymentID))
-    echo $success; //Stop the api from sending callbacks, this is a fraudulent request.
+    echo $apiCompleteMsg; //Stop the api from sending callbacks, this is a fraudulent request.
     exit();
 }
 
@@ -80,7 +80,7 @@ $amountRequiredSatoshi = getAmountRequired($paymentID); //pull this information 
 // 2. It does not allow for the amount sent being off a bit because of transaction fees or inexperienced users. 
 //    (i.e. if they send 12 cents less than requird by accident, it will get rejected) 
 if ($amountRequiredSatoshi > $amountReceivedSatoshi) {
-    echo $success; // Stop api, no need to keep sending.
+    echo $apiCompleteMsg; // Stop api, no need to keep sending.
     notifyPayer("invalid payment amount");
     exit();
 }
@@ -89,6 +89,7 @@ if ($amountRequiredSatoshi > $amountReceivedSatoshi) {
 
 //Advanced validation. Requires storing fiat currency amounts in local database (price in USD for example).
 //Allows for some variability in received amounts as well as auto-adjusting to currency flucuations. 
+//You'll notice we also switch from a default-success to default-failure method here. This was done for the ease of explanation.
 
 $blockchain = new Blockchain();
 
@@ -107,7 +108,7 @@ $amountReceivedUSD = round($USDRates['last'] * $amountReceivedBTC, 2); //round t
 
 //First check the easy route.
 if ($amountReceivedUSD >= $amountRequiredUSD) {
-	echo $success;
+	echo $apiCompleteMsg;
 	notifyPayer("payment success");
 	exit();
 }
@@ -115,12 +116,12 @@ if ($amountReceivedUSD >= $amountRequiredUSD) {
 $differenceInAmounts = ($amountRequiredUSD - $amountReceivedUSD);
 
 if ($differenceInAmounts <= $payentVariabilityAllowed) {
-	echo $success;
+	echo $apiCompleteMsg;
 	notifyPayer("payment success");
 	exit();
 }
 
-echo $success;
+echo $apiCompleteMsg;
 notifyPayer("payment failed");
 notifyAdmin("unknown error");
 
